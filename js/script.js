@@ -57,13 +57,30 @@ window.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("DOMContentLoaded", function () {
   "use strict";
   let tabsContainer = document.querySelector(".info-header");
-  let tabs = document.querySelectorAll("info-header-tab");
+  let tabs = document.querySelectorAll(".info-header-tab");
   let tabContent = document.querySelectorAll(".info-tabcontent");
 
-  function hideShowTabcontent(showFrom) {
-    for (let i = showFrom; i < tabs.length; i++) {
-      tabs[i].classList.toggle("visible");
+  //функция тоглит класс visible у табконтента
+  function hideShowTabcontent(showTabcontent) {
+    for (let i = 0; i < tabs.length; i++) {
+        tabContent[i].classList.remove("visible");
+      if (showTabcontent === i) {
+        tabContent[i].classList.toggle("visible");
+      }
     }
   }
-  hideTabcontent(1);
+  hideShowTabcontent(0); //какой таб показать (от 0)
+
+  //тоглим класс при клике на табы
+  tabsContainer.addEventListener("click", function (e) {
+    let target = e.target;
+    tabs.forEach(function (el, ind) {
+      if (
+        el.innerText == target.innerText &&
+        !tabContent[ind].classList.contains("visible")
+      ) {
+        hideShowTabcontent(+ind);
+      }
+    });
+  });
 });
