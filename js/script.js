@@ -1,7 +1,8 @@
 window.addEventListener("DOMContentLoaded", function () {
   "use strict";
 
-  //#region Tabs
+  //Tabs
+  //#region
   let tabsContainer = document.querySelector(".info-header");
   let tabs = document.querySelectorAll(".info-header-tab");
   let tabContent = document.querySelectorAll(".info-tabcontent");
@@ -29,7 +30,8 @@ window.addEventListener("DOMContentLoaded", function () {
   });
   //#endregion tabs
 
-  //#region timer
+  //timer
+  //#region
   //Set deadline, timer end date in format YYYY-MM-DD
   const timerUntil = "2021-11-28";
   //array of timer's HTML elements
@@ -43,7 +45,7 @@ window.addEventListener("DOMContentLoaded", function () {
   function remainingTime(deadline) {
     const dateNow = Date.parse(Date());
     const remainingTimeMS = Date.parse(deadline) - dateNow;
-    const hours = Math.floor((remainingTimeMS / (1000 * 60 * 60 * 24)) % 24);
+    const hours = Math.floor(remainingTimeMS / (1000 * 60 * 60));
     const minutes = Math.floor((remainingTimeMS / (1000 * 60)) % 60);
     const seconds = Math.floor((remainingTimeMS / 1000) % 60);
     return {
@@ -76,4 +78,31 @@ window.addEventListener("DOMContentLoaded", function () {
     clearInterval(second);
   }
   //#endregion timer
+
+  //modal window
+  //#region
+
+  //#endregion modal window
+  let overlay = document.querySelector(".overlay");
+  let close = document.querySelector(".popup-close");
+
+  document.body.addEventListener("click", function (e) {
+    //check presence classes "more" on button and "description-btn"
+    if (
+      (e.target.className === "more" && e.target.tagName === "BUTTON") ||
+      e.target.className === "description-btn"
+    ) {
+      //to open modal
+      overlay.style.display = "block";
+      this.classList.add("more-splash");
+      document.body.style.overflow = "hidden"; // stop scroll
+    }
+  });
+  close.addEventListener("click", function () {
+    //to close modal
+    overlay.style.display = "none";
+    this.classList.remove("more-splash");
+    document.body.style.overflow = ""; // start scroll
+  });
+  //#endregion
 });
