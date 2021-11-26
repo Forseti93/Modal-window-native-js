@@ -82,8 +82,6 @@ window.addEventListener("DOMContentLoaded", function () {
 
   //modal window
   //#region
-
-  //#endregion modal window
   let overlay = document.querySelector(".overlay");
   let close = document.querySelector(".popup-close");
 
@@ -105,6 +103,6 @@ window.addEventListener("DOMContentLoaded", function () {
     this.classList.remove("more-splash");
     document.body.style.overflow = ""; // start scroll
   });
-  //#endregion
+  //#endregion modal window
 
 });
