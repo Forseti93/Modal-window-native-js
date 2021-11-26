@@ -19,4 +19,4 @@ class Options {
   }
 }
 const item = new Options(300, 350, "red", 34, "center");
-item.createDiv("Text inside new div");
+item.createDiv("Div created with class Options");
