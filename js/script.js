@@ -56,7 +56,8 @@ window.addEventListener("DOMContentLoaded", function () {
     };
   }
   //function assigns innerText to timer
-  //arguments of function are: (HTML elements of timer) and (object from function remainingTime)
+  //arguments of function are: (HTML elements of timer) 
+  //and (object from function remainingTime)
   function loopAndReplace(timerUnits, timerValues) {
     const objValuesArray = Object.values(timerValues);
     for (let i = 1; i < objValuesArray.length; i++) {
