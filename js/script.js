@@ -1,108 +1,105 @@
+"use strict";
+
 window.addEventListener("DOMContentLoaded", function () {
   "use strict";
 
-  //Tabs
-  //#region
-  let tabsContainer = document.querySelector(".info-header");
-  let tabs = document.querySelectorAll(".info-header-tab");
-  let tabContent = document.querySelectorAll(".info-tabcontent");
-  //функция тоглит класс visible у табконтента
+  var tabsContainer = document.querySelector(".info-header");
+  var tabs = document.querySelectorAll(".info-header-tab");
+  var tabContent = document.querySelectorAll(".info-tabcontent");
+
   function hideShowTabcontent(showTabcontent) {
-    for (let i = 0; i < tabs.length; i++) {
+    for (var i = 0; i < tabs.length; i++) {
       tabContent[i].classList.remove("visible");
       if (showTabcontent === i) {
         tabContent[i].classList.toggle("visible");
       }
     }
   }
-  hideShowTabcontent(0); //какой таб показать (от 0)
-  //тоглим класс при клике на табы
+  hideShowTabcontent(0);
   tabsContainer.addEventListener("click", function (e) {
-    let target = e.target;
+    var target = e.target;
     tabs.forEach(function (el, ind) {
-      if (
-        el.innerText == target.innerText &&
-        !tabContent[ind].classList.contains("visible")
-      ) {
+      if (el.innerText == target.innerText && !tabContent[ind].classList.contains("visible")) {
         hideShowTabcontent(+ind);
       }
     });
   });
-  //#endregion tabs
 
-  //timer
-  //#region
-  //Set deadline, timer end date in format YYYY-MM-DD
-  const timerUntil = "2021-11-28";
-  //array of timer's HTML elements
-  const timerComponents = [
-    document.querySelector(".timer-numbers>.hours"),
-    document.querySelector(".timer-numbers>.minutes"),
-    document.querySelector(".timer-numbers>.seconds"),
-  ];
-  //Calculates remaining time in milliseconds and returns object
-  //deadline - end of countdown
+  var timerUntil = "2021-11-29";
+
+  var timerComponents = [document.querySelector(".timer-numbers>.hours"), document.querySelector(".timer-numbers>.minutes"), document.querySelector(".timer-numbers>.seconds")];
+
   function remainingTime(deadline) {
-    const dateNow = Date.parse(Date());
-    const remainingTimeMS = Date.parse(deadline) - dateNow;
-    const hours = Math.floor(remainingTimeMS / (1000 * 60 * 60));
-    const minutes = Math.floor((remainingTimeMS / (1000 * 60)) % 60);
-    const seconds = Math.floor((remainingTimeMS / 1000) % 60);
+    var dateNow = Date.parse(Date());
+    var remainingTimeMS = Date.parse(deadline) - dateNow;
+    var hours = Math.floor(remainingTimeMS / (1000 * 60 * 60));
+    var minutes = Math.floor(remainingTimeMS / (1000 * 60) % 60);
+    var seconds = Math.floor(remainingTimeMS / 1000 % 60);
     return {
       remainingTime: remainingTimeMS,
-      hours,
-      minutes,
-      seconds,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds
     };
   }
-  //function assigns innerText to timer
-  //arguments of function are: (HTML elements of timer) 
-  //and (object from function remainingTime)
+
   function loopAndReplace(timerUnits, timerValues) {
-    const objValuesArray = Object.values(timerValues);
-    for (let i = 1; i < objValuesArray.length; i++) {
-      if (objValuesArray[i] / 10 < 1) {
-        timerUnits[i - 1].innerText = `0${objValuesArray[i]}`;
+    var objValuesArray = Object.values(timerValues);
+    for (var i = 1; i < objValuesArray.length; i++) {
+      if (objValuesArray[i].length < 1) {
+        timerUnits[i - 1].innerText = "0" + objValuesArray[i];
       } else {
         timerUnits[i - 1].innerText = objValuesArray[i];
       }
     }
   }
-  //to show countdown after page loaded
+
   loopAndReplace(timerComponents, remainingTime(timerUntil));
-  //interval that starts functions evey second
-  const second = setInterval(function () {
+
+  var second = setInterval(function () {
     loopAndReplace(timerComponents, remainingTime(timerUntil));
   }, 1000);
-  //clear interval second when coundown is <= 0
+
   if (remainingTime(timerUntil).remainingTime <= 0) {
     clearInterval(second);
   }
-  //#endregion timer
 
-  //modal window
-  //#region
-  let overlay = document.querySelector(".overlay");
-  let close = document.querySelector(".popup-close");
+  var overlay = document.querySelector(".overlay");
+  var close = document.querySelector(".popup-close");
 
   document.body.addEventListener("click", function (e) {
-    //check presence classes "more" on button and "description-btn"
-    if (
-      (e.target.className === "more" && e.target.tagName === "BUTTON") ||
-      e.target.className === "description-btn"
-    ) {
-      //to open modal
+    if (e.target.className === "more" && e.target.tagName === "BUTTON" || e.target.className === "description-btn") {
       overlay.style.display = "block";
       this.classList.add("more-splash");
-      document.body.style.overflow = "hidden"; // stop scroll
+      document.body.style.overflow = "hidden";
     }
   });
   close.addEventListener("click", function () {
-    //to close modal
     overlay.style.display = "none";
     this.classList.remove("more-splash");
-    document.body.style.overflow = ""; // start scroll
+    document.body.style.overflow = "";
   });
-  //#endregion modal window
 
+  var message = {
+    loading: 'Загрузка...',
+    success: 'Спасибо, мы с вами свяжемся',
+    failure: 'Что-то пошло не так'
+  };
+  var form = document.querySelector('.main-form'),
+      input = form.getElementsByTagName('input'),
+      statusMessage = document.createElement('div');
+
+  statusMessage.classList.add('status');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    form.appendChild(statusMessage);
+    var request = new XMLHttpRequest();
+    request.open('POST', 'server.php');
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    var formData = new FormData(form);
+    request.send(formData);
+  });
 });

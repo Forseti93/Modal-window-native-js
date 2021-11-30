@@ -1,0 +1,140 @@
+window.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+
+  //Tabs
+  //#region
+  let tabsContainer = document.querySelector(".info-header");
+  let tabs = document.querySelectorAll(".info-header-tab");
+  let tabContent = document.querySelectorAll(".info-tabcontent");
+  //функция тоглит класс visible у табконтента
+  function hideShowTabcontent(showTabcontent) {
+    for (let i = 0; i < tabs.length; i++) {
+      tabContent[i].classList.remove("visible");
+      if (showTabcontent === i) {
+        tabContent[i].classList.toggle("visible");
+      }
+    }
+  }
+  hideShowTabcontent(0); //какой таб показать (от 0)
+  //тоглим класс при клике на табы
+  tabsContainer.addEventListener("click", function (e) {
+    let target = e.target;
+    tabs.forEach(function (el, ind) {
+      if (
+        el.innerText == target.innerText &&
+        !tabContent[ind].classList.contains("visible")
+      ) {
+        hideShowTabcontent(+ind);
+      }
+    });
+  });
+  //#endregion tabs
+
+  //timer
+  //#region
+  //Set deadline, timer end date in format YYYY-MM-DD
+  const timerUntil = "2021-11-29";
+  //array of timer's HTML elements
+  const timerComponents = [
+    document.querySelector(".timer-numbers>.hours"),
+    document.querySelector(".timer-numbers>.minutes"),
+    document.querySelector(".timer-numbers>.seconds"),
+  ];
+  //Calculates remaining time in milliseconds and returns object
+  //deadline - end of countdown
+  function remainingTime(deadline) {
+    const dateNow = Date.parse(Date());
+    const remainingTimeMS = Date.parse(deadline) - dateNow;
+    const hours = Math.floor(remainingTimeMS / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingTimeMS / (1000 * 60)) % 60);
+    const seconds = Math.floor((remainingTimeMS / 1000) % 60);
+    return {
+      remainingTime: remainingTimeMS,
+      hours,
+      minutes,
+      seconds,
+    };
+  }
+  //function assigns innerText to timer
+  //arguments of function are: (HTML elements of timer)
+  //and (object from function remainingTime)
+  function loopAndReplace(timerUnits, timerValues) {
+    const objValuesArray = Object.values(timerValues);
+    for (let i = 1; i < objValuesArray.length; i++) {
+      if (objValuesArray[i].length < 1) {
+        timerUnits[i - 1].innerText = `0${objValuesArray[i]}`;
+      } else {
+        timerUnits[i - 1].innerText = objValuesArray[i];
+      }
+    }
+  }
+  //to show countdown after page loaded
+  loopAndReplace(timerComponents, remainingTime(timerUntil));
+  //interval that starts functions evey second
+  const second = setInterval(function () {
+    loopAndReplace(timerComponents, remainingTime(timerUntil));
+  }, 1000);
+  //clear interval second when coundown is <= 0
+  if (remainingTime(timerUntil).remainingTime <= 0) {
+    //message to user that timer expired
+    clearInterval(second);
+  }
+  //#endregion timer
+
+  //modal window
+  //#region
+  let overlay = document.querySelector(".overlay");
+  let close = document.querySelector(".popup-close");
+
+  document.body.addEventListener("click", function (e) {
+    //check presence classes "more" on button and "description-btn"
+    if (
+      (e.target.className === "more" && e.target.tagName === "BUTTON") ||
+      e.target.className === "description-btn"
+    ) {
+      //to open modal
+      overlay.style.display = "block";
+      this.classList.add("more-splash");
+      document.body.style.overflow = "hidden"; // stop scroll
+    }
+  });
+  close.addEventListener("click", function () {
+    //to close modal
+    overlay.style.display = "none";
+    this.classList.remove("more-splash");
+    document.body.style.overflow = ""; // start scroll
+  });
+  //#endregion modal window
+
+  //form
+  //#region
+  //показать строку если запрос не обработался до конца
+  let message = {
+    loading: 'Загрузка...',
+    success: 'Спасибо, мы с вами свяжемся',
+    failure: 'Что-то пошло не так',
+  };
+  let form = document.querySelector('.main-form'),
+    input = form.getElementsByTagName('input'),
+    statusMessage = document.createElement('div');
+  //сразу добавили класс на новый элемент
+  statusMessage.classList.add('status');
+  //запрос на сервер, при клике на кнопку
+  //(форму можно отправить с инпутом типа сабмит)
+  form.addEventListener('submit', function (e) {
+    //убираем перезагрузку стриницы
+    e.preventDefault();
+    //для вывода результата запроса
+    form.appendChild(statusMessage);
+    let request = new XMLHttpRequest();
+    request.open('POST', 'server.php');
+    request.setRequestHeader(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    //FormData создаст объект ключ вэлью (ключ это нейм инпута, а вэлью вводит пользователь)
+    let formData = new FormData(form);
+    request.send(formData);
+  });
+  //#endregion
+});
